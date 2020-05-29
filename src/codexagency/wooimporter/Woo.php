@@ -171,7 +171,7 @@ class Woo extends CLI
             if (!$variableProductID = wc_get_product_id_by_sku($product['CODICE'])) {
                 $this->createVariable($this->getsVariationInArrayByCode($products, $product['CODICE']));
             } else {
-                $this->updateVariable($this->getsVariationInArrayByCode($products, $product['CODICE']) , $variableProductID);
+                $this->updateVariable($this->getsVariationInArrayByCode($products, $product['CODICE']), $variableProductID);
             }
         }
 
@@ -184,9 +184,10 @@ class Woo extends CLI
      * @param string $filename es.: file.csv
      * @return void
      */
-    protected function deleteFile(string $filename){
+    protected function deleteFile(string $filename)
+    {
         $tmpPath = $this->csvPath . $filename;
-        if(file_exists( $tmpPath )){
+        if (file_exists($tmpPath)) {
             unlink($tmpPath);
         }
     }
@@ -196,8 +197,9 @@ class Woo extends CLI
      * @param string $categoryName
      * @return WC_Product_Variable
      */
-    protected function setVariableProductCategory(WC_Product_Variable $variableProduct, string $categoryName): WC_Product_Variable {
-        if(!$catID = $this->getCategoryIdByName($categoryName)) {
+    protected function setVariableProductCategory(WC_Product_Variable $variableProduct, string $categoryName): WC_Product_Variable
+    {
+        if (!$catID = $this->getCategoryIdByName($categoryName)) {
             $catID = $this->createProductCategory($categoryName);
         }
         $variableProduct->set_category_ids([$catID]);
@@ -209,7 +211,8 @@ class Woo extends CLI
      * @param string $categoryName
      * @return int
      */
-    protected function getCategoryIdByName(string $categoryName) : ?int {
+    protected function getCategoryIdByName(string $categoryName): ?int
+    {
         return get_terms([
             'taxonomy' => 'product_cat',
             'name' => $categoryName,
@@ -222,8 +225,9 @@ class Woo extends CLI
      * @param string $categoryName
      * @return int
      */
-    protected function createProductCategory(string $categoryName) : ?int {
-        return wp_insert_term( $categoryName, 'product_cat')['term_id'];
+    protected function createProductCategory(string $categoryName): ?int
+    {
+        return wp_insert_term($categoryName, 'product_cat')['term_id'];
     }
 
     /**
@@ -233,10 +237,11 @@ class Woo extends CLI
      * @param int $code
      * @return array
      */
-    protected function getsVariationInArrayByCode(array $products, int $code) : array {
+    protected function getsVariationInArrayByCode(array $products, int $code): array
+    {
         $variations = [];
         foreach ($products as $product) {
-            if ($code === (int) $product['CODICE']){
+            if ($code === (int) $product['CODICE']) {
                 $variations[] = $product;
             }
         }
@@ -257,14 +262,14 @@ class Woo extends CLI
 
         $productData = $productsData[0];
         /**
-         * @var $wcProduct WC_Product_Variable
+         * @var WC_Product_Variable $wcProduct
          */
         $wcProduct = new $this->productVariableInterface;
         $wcProduct->set_sku($productData['CODICE']);
         $wcProduct->set_name($productData['NOME']);
 
         /**
-         * @var $attrSize WC_Product_Attribute;
+         * @var WC_Product_Attribute $attrSize
          */
         $attrSize = new $this->productAttrInterface;
         $attrSize->set_name('Taglia');
@@ -307,7 +312,7 @@ class Woo extends CLI
          * @var $wcVariationsProduct WC_Product_Variation
          */
         $wcVariationsProduct = new $this->productVariationsInterface;
-        $wcVariationsProduct->set_sku($productData['CODICE'].'-'.$productData['CODICE_VARIANTE']);
+        $wcVariationsProduct->set_sku($productData['CODICE'] . '-' . $productData['CODICE_VARIANTE']);
         $wcVariationsProduct->set_parent_id($parent_id);
 
         $wcVariationsProduct->set_attributes(
@@ -348,7 +353,7 @@ class Woo extends CLI
      * @param array $productsData
      * @param int $productID
      */
-    protected function updateVariable(array $productsData, int $productID) : void
+    protected function updateVariable(array $productsData, int $productID): void
     {
         /**
          * @var $variableProduct WC_Product_Variable
@@ -358,7 +363,7 @@ class Woo extends CLI
         $variableProduct->save();
 
         foreach ($productsData as $product) {
-            if($variationID = wc_get_product_id_by_sku($product['CODIE'].'-'.$product['CODICE_VARIANTE'])){
+            if ($variationID = wc_get_product_id_by_sku($product['CODIE'] . '-' . $product['CODICE_VARIANTE'])) {
                 $this->updateSimple($product, $variationID);
             }
         }
@@ -371,7 +376,7 @@ class Woo extends CLI
      * @param int $productID
      * @return int
      */
-    protected function updateSimple(array $productData, int $productID) : int
+    protected function updateSimple(array $productData, int $productID): int
     {
         /**
          * @var $product WC_Product_Variation
@@ -379,9 +384,9 @@ class Woo extends CLI
         //$productStock = wc_update_product_stock($productID);
         $product = new $this->productVariationsInterface($productID);
         //$product = new WC_Product_Variation($productID);
-        $product->set_regular_price( (float) $productData['PREZZO_VENDITA'] );
+        $product->set_regular_price((float) $productData['PREZZO_VENDITA']);
 
-        if((float) $productData['QUANTITA'] > 0) {
+        if ((float) $productData['QUANTITA'] > 0) {
             $product->set_stock_quantity((float) $productData['QUANTITA']);
             $product->set_manage_stock(true);
             $product->set_stock_status('instock');
@@ -395,7 +400,7 @@ class Woo extends CLI
     }
 
 
-    protected function main(Options $options) : void
+    protected function main(Options $options): void
     {
         if ($options->getOpt('version')) {
             $this->info('0.0.1');
