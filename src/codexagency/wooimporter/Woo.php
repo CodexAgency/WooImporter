@@ -6,17 +6,13 @@ namespace CodexAgency\WooImporter;
 use splitbrain\phpcli\CLI;
 use splitbrain\phpcli\Options;
 use splitbrain\phpcli\Colors;
-use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SplFileInfo;
 use splitbrain\phpcli\TableFormatter;
-use CodexAgency\WooImporter\CSV;
 use WC_Data_Exception;
 use WC_Product_Attribute;
 use WC_Product_Variable;
 use WC_Product_Variation;
-use WC_Widget_Product_Categories;
-use WP;
 
 
 class Woo extends CLI
@@ -121,8 +117,6 @@ class Woo extends CLI
         }
 
         echo PHP_EOL;
-
-
     }
 
     /**
@@ -267,6 +261,8 @@ class Woo extends CLI
         $wcProduct = new $this->productVariableInterface;
         $wcProduct->set_sku($productData['CODICE']);
         $wcProduct->set_name($productData['NOME']);
+        $wcProduct->set_short_description($productData['NOTE']);
+        $wcProduct->set_description($productData['DESCRIZIONE']);
 
         /**
          * @var WC_Product_Attribute $attrSize
@@ -416,5 +412,4 @@ class Woo extends CLI
             echo $options->help();
         }
     }
-
 }
