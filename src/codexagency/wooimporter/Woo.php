@@ -175,7 +175,20 @@ class Woo extends CLI
             }
         }
 
+        foreach ($files as $filename) {
+            $this->deleteFile($filename);
+        }
+    }
 
+    /**
+     * @param string $filename es.: file.csv
+     * @return void
+     */
+    protected function deleteFile(string $filename){
+        $tmpPath = $this->csvPath . $filename;
+        if(file_exists( $tmpPath )){
+            unlink($tmpPath);
+        }
     }
 
     /**
