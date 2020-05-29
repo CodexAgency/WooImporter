@@ -162,7 +162,8 @@ class Woo extends CLI
 
         foreach ($products as $product) {
             $iterateVariableProduct = [];
-            if (!$variableProductID = wc_get_product_id_by_sku($product['CODICE'])) {
+            $variableProductID = wc_get_product_id_by_sku($product['CODICE']);
+            if (!$variableProductID) {
                 $this->createVariable($this->getsVariationInArrayByCode($products, $product['CODICE']));
             } else {
                 $this->updateVariable($this->getsVariationInArrayByCode($products, $product['CODICE']), $variableProductID);
